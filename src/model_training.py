@@ -1,4 +1,5 @@
 import joblib 
+import comet_ml
 import numpy as np 
 import os 
 import sys
@@ -8,13 +9,22 @@ from utils.common_functions import read_yaml
 from src.custom_exception import AppException
 from src.base_model import BaseModel 
 from config.paths_config import * 
+from dotenv import load_dotenv
 
+load_dotenv()
+COMET_ML_API_KEY = os.getenv('COMET_ML_API_KEY')
+WORKSPACE = os.getenv("WORKSPACE")
 logger = get_logger(__name__)
 
 class ModelTraining:
     def __init__(self, config_path):
         self.config = read_yaml(config_path)
-        logger.info("Model Training Initialized")
+        self.experiment = comet_ml.Experiment(
+            api_key=COMET_ML_API_KEY,
+            project_name="anime-recommender",
+            workspace=WORKSPACE
+        )
+        logger.info("Model Training and Comet ML Initialized")
 
     def load_data(self):
         try:
@@ -41,6 +51,7 @@ class ModelTraining:
 
             model = base_model.RecommenderNet(n_users, n_anime)
 
+            embedding_size = int(self.config["model"]["embedding_size"])
             epochs = int(self.config["model"]["epochs"])
             start_lr = float(self.config["model"]["start_lr"])
             max_lr = float(self.config["model"]["max_lr"])
@@ -83,6 +94,27 @@ class ModelTraining:
                 model.load_weights(CHECKPOINT_FILE_PATH)
                 logger.info("Model Training Completed")
 
+                for epoch in range(len(history.history['loss'])):
+                    train_loss = history.history['loss'][epoch]
+                    val_loss = history.history['val_loss'][epoch]
+
+                    self.experiment.log_metric('train_loss', train_loss, step=epoch)
+                    self.experiment.log_metric('val_loss', val_loss, step=epoch)
+                    self.experiment.log_parameters({
+                        "embedding_size": embedding_size,
+                        "optimizer": self.config["model"]["optimizer"],
+                        "loss_function": self.config["model"]["loss"],
+                        "batch_size": batch_size,
+                        "epochs": epochs,
+                        "lr_schedule": "warmup+exp_decay",
+                        "start_lr": start_lr,
+                        "max_lr": max_lr,
+                        "min_lr": min_lr,
+                        "rating_normalized": True,
+                        "num_users": n_users,
+                        "num_anime": n_anime
+                    })
+
             except Exception as e:
                 raise AppException(e,sys) from e 
             
@@ -113,6 +145,10 @@ class ModelTraining:
 
             joblib.dump(user_weights, USER_WEIGHTS_PATH)
             joblib.dump(anime_weights, ANIME_WEIGHTS_PATH)
+
+            self.experiment.log_asset(MODEL_PATH)
+            self.experiment.log_asset(ANIME_WEIGHTS_PATH)
+            self.experiment.log_asset(USER_WEIGHTS_PATH)
 
             logger.info("User and Anime weights saved successfully")
 
