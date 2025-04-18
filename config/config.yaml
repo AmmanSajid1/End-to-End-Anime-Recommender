@@ -4,3 +4,19 @@ data_ingestion:
     - "anime.csv"
     - "anime_with_synopsis.csv"
     - "animelist.csv"
+
+
+model:
+  embedding_size: 128
+  epochs: 20
+  loss: mean_squared_error
+  optimizer: Adam
+  metrics: ["mae", "mse"]
+  dropout: 0.3
+  start_lr: 1e-5
+  max_lr: 5e-4
+  min_lr: 1e-6
+  batch_size: 10000
+  ramup_epochs: 5
+  sustain_epochs: 0
+  exp_decay: 0.8
