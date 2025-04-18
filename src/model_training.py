@@ -20,9 +20,9 @@ class ModelTraining:
     def __init__(self, config_path):
         self.config = read_yaml(config_path)
         self.experiment = comet_ml.Experiment(
-            api_key=COMET_ML_API_KEY,
+            api_key="SZoW3hoMozMFVfZXnfbXraSDA",
             project_name="anime-recommender",
-            workspace=WORKSPACE
+            workspace="ammansajid1"
         )
         logger.info("Model Training and Comet ML Initialized")
 
