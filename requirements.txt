@@ -5,4 +5,6 @@ setuptools
 google-cloud-storage
 pyyaml
 tensorflow
+scikit-learn
+joblib
 
