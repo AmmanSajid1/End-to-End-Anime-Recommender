@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+    <!-- jQuery (required by Select2) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <title>Anime Recommender</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 30px; background-color: #f0f0f0; }
+        .anime { display: inline-block; margin: 10px; text-align: center; }
+        img { width: 150px; height: 220px; border-radius: 8px; }
+        input, button, textarea { margin: 10px 0; width: 100%; padding: 8px; }
+    </style>
+    <style>
+        .recommendations {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+          gap: 30px;
+          padding: 20px;
+        }
+        
+        .card {
+          width: 180px;
+          text-align: center;
+          background-color: #1c1c1c;
+          border-radius: 8px;
+          overflow: hidden;
+          box-shadow: 0 0 10px rgba(255,255,255,0.05);
+          padding: 10px;
+        }
+        
+        .card img {
+          width: 100%;
+          height: 260px;
+          object-fit: cover;
+          border-radius: 4px;
+        }
+        
+        .card p {
+          margin-top: 10px;
+          font-size: 0.9rem;
+          color: #f0f0f0;
+        }
+        </style>
+</head>
+<body>
+    <h1>Anime Recommender</h1>
+    <form method="POST">
+        <label for="userID">Enter your User ID (if registered):</label>
+        <input type="number" name="userID" placeholder="Optional">
+    
+        <label for="favorites">Or select your favorite anime:</label>
+        <select name="favorites" multiple id="favorites" style="width: 100%;">
+        {% for title in anime_titles %}
+            <option value="{{ title }}">{{ title }}</option>
+        {% endfor %}
+        </select>
+    
+        <button type="submit">Get Recommendations</button>
+    </form>
+    {% if error_message %}
+        <p style="color: red;">{{ error_message }}</p>
+    {% endif %}
+
+    {% if recommendations %}
+        <h2>Recommended Anime</h2>
+        <div class="recommendations">
+            {% for rec in recommendations %}
+              <div class="card">
+                <img src="{{ rec.image_url if rec.image_url else url_for('static', filename='placeholder.jpg') }}">
+                <p>{{ rec.title }}</p>
+              </div>
+            {% endfor %}
+          </div>
+    {% endif %}
+</body>
+<script>
+    $(document).ready(function() {
+        $('#favorites').select2({
+            placeholder: "Select your favorite anime",
+            allowClear: true
+        });
+    });
+</script>
+</html>

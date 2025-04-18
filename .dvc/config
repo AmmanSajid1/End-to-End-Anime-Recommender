@@ -1,0 +1,4 @@
+[core]
+    remote = myremotebucket
+['remote "myremotebucket"']
+    url = gs://mydvcbucket1/
