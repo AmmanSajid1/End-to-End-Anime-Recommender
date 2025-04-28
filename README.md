@@ -123,7 +123,7 @@ A simple, responsive web interface where users can input their user ID and get r
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/End-to-End-Anime-Recommender.git
+git clone https://github.com/AmmanSajid1/End-to-End-Anime-Recommender.git
 cd End-to-End-Anime-Recommender
 
 # Create a virtual environment
