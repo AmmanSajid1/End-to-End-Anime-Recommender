@@ -119,29 +119,6 @@ A simple, responsive web interface where users can input their user ID and get r
 
 ---
 
-## 📝 Setup Instructions
-
-```bash
-# Clone the repository
-git clone https://github.com/AmmanSajid1/End-to-End-Anime-Recommender.git
-cd End-to-End-Anime-Recommender
-
-# Create a virtual environment
-python -m venv venv
-source venv/bin/activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Train the model (ensure data is pulled via DVC)
-python -m pipeline.training_pipeline
-
-# Launch the Flask app
-python application.py
-```
-
----
-
 ## 📈 Results
 
 - Achieved strong validation performance through careful hyperparameter tuning.
